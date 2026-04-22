@@ -27,7 +27,7 @@ const createTransaction = async (req, res, next) => {
     const transaction = await Transaction.create({
       title: description,
       description,
-      amount,
+      amount: Number(amount),
       type: typeMap[type] || type,
       category: categoryMap[category] || "other",
       date: new Date(),

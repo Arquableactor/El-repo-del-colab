@@ -16,13 +16,6 @@ export default function Header() {
           </p>
         </div>
 
-        <button
-          onClick={() => setOpen(true)}
-          className="bg-[#00D4FF] text-black px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition"
-        >
-          + Nueva transacción
-        </button>
-
       </header>
 
       <Modal isOpen={open} onClose={() => setOpen(false)}>

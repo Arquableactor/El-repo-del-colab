@@ -80,26 +80,48 @@ export default function Dashboard() {
 
   const balance = totalIncome - totalExpense;
 
-  const handleSubmit = async () => {
-    try {
-      await createTransaction({
-        description,
-        amount,
-        type,
-        category,
-      });
-
-      queryClient.invalidateQueries(["transactions"]);
-
-      setIsOpen(false);
-      setDescription("");
-      setAmount("");
-      setType("");
-      setCategory("");
-    } catch (error) {
-      console.error(error);
+const handleSubmit = async () => {
+  try {
+    if (!description || !amount || !type || !category) {
+      alert("Completa todos los campos");
+      return;
     }
-  };
+
+    const payload = {
+      title: description,
+      description: description,
+      amount: Number(amount),
+      type: type === "Ingreso" ? "income" : "expense",
+      category:
+        category === "Comida"
+          ? "food"
+          : category === "Transporte"
+          ? "transport"
+          : category === "Entretenimiento"
+          ? "entertainment"
+          : "other",
+      paymentMethod: "cash",
+      date: new Date().toISOString(),
+    };
+
+    console.log("ENVIANDO:", payload);
+
+    const res = await createTransaction(payload);
+
+    console.log("RESPUESTA:", res);
+
+    queryClient.invalidateQueries(["transactions"]);
+
+    setIsOpen(false);
+    setDescription("");
+    setAmount("");
+    setType("");
+    setCategory("");
+
+  } catch (error) {
+    console.error("ERROR COMPLETO:", error);
+  }
+};
 
   return (
     <DashboardLayout>
@@ -109,7 +131,7 @@ export default function Dashboard() {
         <div className="flex justify-end mb-4">
           <button
             onClick={() => setIsOpen(true)}
-            className="bg-cyan-500 text-black px-4 py-2 rounded-lg"
+            className="bg-cyan-500 text-black px-4 py-2 rounded-lg hover:bg-cyan-400 transition"
           >
             + Nueva transacción
           </button>
@@ -170,7 +192,7 @@ export default function Dashboard() {
           placeholder="Descripción"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full mb-3 p-2 bg-[#0B1220] text-white"
+          className="w-full mb-3 p-2 bg-[#0B1220] text-white rounded"
         />
 
         <input
@@ -178,13 +200,13 @@ export default function Dashboard() {
           placeholder="Monto"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
-          className="w-full mb-3 p-2 bg-[#0B1220] text-white"
+          className="w-full mb-3 p-2 bg-[#0B1220] text-white rounded"
         />
 
         <select
           value={type}
           onChange={(e) => setType(e.target.value)}
-          className="w-full mb-3 p-2 bg-[#0B1220] text-white"
+          className="w-full mb-3 p-2 bg-[#0B1220] text-white rounded"
         >
           <option value="">Tipo</option>
           <option value="Ingreso">Ingreso</option>
@@ -194,7 +216,7 @@ export default function Dashboard() {
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="w-full mb-3 p-2 bg-[#0B1220] text-white"
+          className="w-full mb-3 p-2 bg-[#0B1220] text-white rounded"
         >
           <option value="">Categoría</option>
           <option value="Comida">Comida</option>
@@ -205,7 +227,7 @@ export default function Dashboard() {
 
         <button
           onClick={handleSubmit}
-          className="w-full bg-cyan-500 text-black py-2 rounded-lg"
+          className="w-full bg-cyan-500 text-black py-2 rounded-lg hover:bg-cyan-400 transition"
         >
           Guardar
         </button>

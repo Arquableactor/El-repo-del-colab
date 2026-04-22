@@ -1,28 +1,12 @@
 const express = require("express");
-
-const {
-  getAllTransactions,
-  getTransactionById,
-  createTransaction,
-  updateTransaction,
-  deleteTransaction,
-} = require("../controllers/transaction.controller");
-
 const router = express.Router();
 
-// GET all
-router.get("/", getAllTransactions);
+const controller = require("../controllers/transaction.controller");
 
-// GET by id
-router.get("/:id", getTransactionById);
-
-// POST create
-router.post("/", createTransaction);
-
-// PUT update
-router.put("/:id", updateTransaction);
-
-// DELETE
-router.delete("/:id", deleteTransaction);
+router.get("/", controller.getAllTransactions);
+router.get("/:id", controller.getTransactionById);
+router.post("/", controller.createTransaction);
+router.put("/:id", controller.updateTransaction);
+router.delete("/:id", controller.deleteTransaction);
 
 module.exports = router;

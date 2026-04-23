@@ -4,5 +4,5 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  base: "/El-repo-del-colab/"
-})
+base: "/El-repo-del-colab/flowcash-frontend/"}
+)

@@ -1,11 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
-import { getTransactions, deleteTransaction } from "../services/api";
+import {
+  getTransactions,
+  deleteTransaction,
+  updateTransaction,
+} from "../services/api";
 
 import DashboardLayout from "../components/layout/DashboardLayout";
 import TransactionList from "../components/transactions/TransactionList";
 import TransactionFilter from "../components/transactions/TransactionFilter";
+import EditTransactionModal from "../components/transactions/EditTransactionModal";
 
 export default function Transactions() {
   const [filters, setFilters] = useState({
@@ -14,6 +19,9 @@ export default function Transactions() {
     category: "all",
   });
 
+  const [selectedTx, setSelectedTx] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
@@ -21,8 +29,17 @@ export default function Transactions() {
     queryFn: getTransactions,
   });
 
+  // 🗑️ DELETE
   const deleteMutation = useMutation({
     mutationFn: deleteTransaction,
+    onSuccess: () => {
+      queryClient.invalidateQueries(["transactions"]);
+    },
+  });
+
+  // ✏️ UPDATE
+  const updateMutation = useMutation({
+    mutationFn: updateTransaction,
     onSuccess: () => {
       queryClient.invalidateQueries(["transactions"]);
     },
@@ -33,7 +50,12 @@ export default function Transactions() {
   };
 
   const handleEdit = (tx) => {
-    console.log("Editar:", tx);
+    setSelectedTx(tx);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = (updatedTx) => {
+    updateMutation.mutate(updatedTx);
   };
 
   if (isLoading) {
@@ -78,6 +100,14 @@ export default function Transactions() {
         transactions={filteredTransactions}
         onDelete={handleDelete}
         onEdit={handleEdit}
+      />
+
+      {/*  MODAL */}
+      <EditTransactionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        tx={selectedTx}
+        onSave={handleSave}
       />
     </DashboardLayout>
   );

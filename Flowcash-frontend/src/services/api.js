@@ -26,17 +26,17 @@ export const createTransaction = async (payload) => {
   return data.data;
 };
 
-export const updateTransaction = async (id, payload) => {
-  const res = await fetch(`${BASE_URL}/transactions/${id}`, {
+export const updateTransaction = async (tx) => {
+  const res = await fetch(`${BASE_URL}/transactions/${tx._id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      description: payload.description,
-      amount: Number(payload.amount),
-      type: payload.type,
-      category: payload.category,
+      description: tx.description,
+      amount: Number(tx.amount),
+      type: tx.type,
+      category: tx.category,
     }),
   });
 
